@@ -1,0 +1,58 @@
+version: "3.9"
+
+services:
+  # MongoDB service
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017"
+    networks:
+      - asnetwork
+
+  # Backend service
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    volumes:
+      - ./uploads:/app/uploads
+    environment:
+      PORT: 5000
+      MONGODB_URI: mongodb://mongodb:27017/asdatabase
+      FRONTEND_URI: http://localhost:5173
+      JWT_SECRET: "randomABSharingSecret"
+      SENDGRID_API_KEY: "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"
+      EMAIL_FROM: "microcellops@gmail.com"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+    networks:
+      - asnetwork
+
+  # Frontend service
+  frontend:
+    build:
+      context: ./frontend
+    container_name: frontend
+    environment:
+      VITE_BACKEND_SERVER: http://localhost:5000/api/v1
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    networks:
+      - asnetwork
+
+# Volumes to persist MongoDB data
+volumes:
+  mongodb_data:
+    driver: local
+
+# Networks for service communication
+networks:
+  asnetwork:
+    driver: bridge
