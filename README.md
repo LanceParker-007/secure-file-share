@@ -10,6 +10,8 @@
 
 ## 🚀 Features
 
+- **Signup using mfa**: Sign up using mfa and password hashing.
+  > (mfa disabled for now as sendgrid won't sent email(as I exposed my sengrid api key here), so once you signup, you can simply sign in without otp entering or you can get otp from logs, I have logged it and you can proceed.)
 - **Secure File Sharing**: Share files securely using expirable links.
 - **Expirable Links**: Set expiration times to ensure files are inaccessible after a specific duration.
 - **Make link for specific People**: You can also mentions emails who can access these files.
@@ -29,7 +31,7 @@ Ensure you have the following installed:
 
 ### 2. Build and Run the Project
 
-Run the following command in the root directory of the project:
+Run the following commands from VS code to run the project on your machine:
 
 > git clone https://github.com/LanceParker-007/secure-file-share.git
 
@@ -38,6 +40,8 @@ Run the following command in the root directory of the project:
 > docker-compose up --build
 
 This command will build the frontend and backend services, set up a MongoDB container, and start all services.
+
+> **Will soon ad the live link where everything will work!** It is almost done (will add the link here). Here files are encrypted (which you check yourself in the uploads folder) and stored locally but on live aws s3 is used.\*\*
 
 ## Usage
 
