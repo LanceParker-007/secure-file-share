@@ -19,6 +19,11 @@ services:
     container_name: backend
     volumes:
       - ./uploads:/app/uploads
+      - type: bind
+        source: ./uploads
+        target: /app/uploads
+        bind:
+          create_host_path: true
     environment:
       PORT: 5000
       MONGODB_URI: mongodb://mongodb:27017/asdatabase

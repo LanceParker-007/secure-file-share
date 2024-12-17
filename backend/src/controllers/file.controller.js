@@ -47,7 +47,9 @@ export const getUserFiles = async (req, res) => {
     );
 
     if (!files || files.length === 0) {
-      return ResponseHandler.error(res, "No files found for the user");
+      return ResponseHandler.success(res, "User has not uploaded any files!", {
+        files: [],
+      });
     }
 
     return ResponseHandler.success(res, "Files fetched successfully", {
@@ -294,7 +296,9 @@ export const deleteFile = async (req, res) => {
     // Fetch the file metadata
     const file = await File.findOne({ _id: fileId, ownerId: userId });
 
-    console.log(file);
+    // console.log("User ID:", userId);
+    // console.log("File ID:", fileId);
+    // console.log("File Details:", file);
 
     if (!file) {
       return ResponseHandler.error(
@@ -306,10 +310,26 @@ export const deleteFile = async (req, res) => {
     // Path to the stored file
     const filePath = file?.filePath;
 
-    console.log(filePath);
+    // console.log("File Path:", filePath);
 
-    // Delete the file from the file system
-    await fs.unlink(filePath);
+    // Check if file exists and delete
+    try {
+      // Use access to check file existence
+      await fs.access(filePath);
+
+      // If access succeeds, delete the file
+      await fs.unlink(filePath);
+      // console.log("File deleted successfully");
+    } catch (fileError) {
+      // If access fails, it means file doesn't exist
+      if (fileError.code === "ENOENT") {
+        console.log("File does not exist, skipping file system deletion");
+      } else {
+        console.error("File access/delete error:", fileError);
+        // Throw the error if it's not a "file not found" error
+        throw fileError;
+      }
+    }
 
     // Remove the file metadata from the database
     await File.deleteOne({ _id: fileId });
@@ -317,6 +337,7 @@ export const deleteFile = async (req, res) => {
     // Return success response
     return ResponseHandler.success(res, "File deleted successfully");
   } catch (error) {
+    console.error("Full Error:", error);
     return ResponseHandler.error(
       res,
       "Failed to delete file! " + error.message

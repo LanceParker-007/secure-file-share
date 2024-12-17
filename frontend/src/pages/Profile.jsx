@@ -15,7 +15,6 @@ import {
   FiX,
   FiLink,
 } from "react-icons/fi";
-import { MdSend } from "react-icons/md";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -74,8 +73,6 @@ const Profile = () => {
   };
 
   const handleDownload = (file) => {
-    console.log(file);
-    
     dispatch(
       downloadFile({
         linkId: null,
@@ -84,12 +81,12 @@ const Profile = () => {
         user: userDetails,
       })
     );
-    // inkId, fileName, user
   };
 
   const handleDelete = (fileId) => {
     if (window.confirm("Are you sure you want to delete this file?")) {
       dispatch(deleteFile({ fileId }));
+      dispatch(fetchUserFiles());
     }
   };
 
