@@ -35,7 +35,7 @@ export default function PrivacyPolicyPage() {
           <ul className="list-disc list-inside text-gray-300 space-y-2">
             <li>Account information (e.g., name, email address)</li>
             <li>Profile information (e.g., username, avatar)</li>
-            <li>Content you submit (e.g., repositories, comments)</li>
+            <li>Content you submit (e.g., files, comments)</li>
             <li>Communication data (e.g., support requests)</li>
           </ul>
         </section>

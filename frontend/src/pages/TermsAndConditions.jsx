@@ -30,9 +30,8 @@ export default function TermsAndConditionsPage() {
             2. Description of Service
           </h2>
           <p className="text-gray-300">
-            Our platform provides a marketplace for developers to share and sell
-            their code repositories. We do not guarantee the quality, safety, or
-            legality of the repositories listed on our platform.
+            Our platform provides a platform for people to share files securely.
+            We do not guarantee the quality, safety, or legality of the files.
           </p>
         </section>
 

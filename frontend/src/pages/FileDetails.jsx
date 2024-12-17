@@ -7,12 +7,11 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { downloadFile } from "../redux/actions/fileActions";
 
-const handleShare = (repo) => {
+const handleShare = (file) => {
   if (navigator.share) {
     navigator
       .share({
-        title: repo.title,
-        text: repo?.description?.substring(0, 60),
+        title: file.fileName,
         url: window.location.href,
       })
       .then(() => console.log("Shared successfully!"))
@@ -22,12 +21,12 @@ const handleShare = (repo) => {
   }
 };
 
-const ShareButton = ({ repoDetails }) => {
+const ShareButton = ({ shareInfo }) => {
   return (
     <motion.button
       whileTap={{ scale: 0.95 }}
       className="bg-gray-200 text-indigo-600 px-4 py-2 rounded-md hover:bg-gray-300 flex items-center"
-      onClick={() => handleShare(repoDetails)}
+      onClick={() => handleShare(shareInfo)}
     >
       <FiShare2 className="mr-2" />
       Share
@@ -156,7 +155,7 @@ const FileDetails = () => {
 
           {/* Share and Download Buttons */}
           <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center">
-            <ShareButton repoDetails={fileDetails} />
+            <ShareButton shareInfo={fileDetails} />
 
             <motion.button
               whileTap={{ scale: 0.95 }}
