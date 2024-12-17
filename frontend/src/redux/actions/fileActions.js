@@ -85,8 +85,6 @@ export const generateShareLink = createAsyncThunk(
 export const downloadFile = createAsyncThunk(
   "downloadFile",
   async ({ linkId, fileId, fileName, user }, { rejectWithValue }) => {
-    console.log(fileId);
-    
     try {
       // Make the API request to fetch user files
       const { data } = await axios.post(

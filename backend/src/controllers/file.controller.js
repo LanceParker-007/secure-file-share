@@ -218,7 +218,7 @@ export const downloadFile = async (req, res) => {
     const file = await File.findById(fileId || linkPermission.fileId);
 
     if (!file) {
-      return res.status(404).json({ error: "File not found." });
+      return ResponseHandler.error(res, "File not found.", 404);
     }
 
     // Check download permissions
@@ -234,9 +234,11 @@ export const downloadFile = async (req, res) => {
         linkPermission.sharedWith.includes(user.email));
 
     if (!isOwner && !isSharedWithUser) {
-      return res.status(403).json({
-        error: "You do not have permission to download this file.",
-      });
+      return ResponseHandler.error(
+        res,
+        "You do not have permission to download this file.",
+        403
+      );
     }
 
     // Additional validation for file path

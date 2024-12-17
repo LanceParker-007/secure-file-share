@@ -14,7 +14,6 @@ const handleShare = (file) => {
         title: file.fileName,
         url: window.location.href,
       })
-      .then(() => console.log("Shared successfully!"))
       .catch((error) => console.log("Error sharing:", error));
   } else {
     console.log("Share API not supported");
@@ -71,6 +70,7 @@ const FileDetails = () => {
     fetchFileDetails();
   }, [linkId]);
 
+  // TODO: Will have to handle this case in actions later
   const handleDownload = async () => {
     // Reset previous errors
     setError(null);
@@ -85,21 +85,71 @@ const FileDetails = () => {
     setDownloadLoading(true);
 
     try {
-      // Dispatch download action
-      await dispatch(
-        downloadFile({
-          linkId,
-          fileName: fileDetails.fileName,
-          user,
-        })
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_SERVER}/file/download`,
+        { linkPermissionId: linkId, fileId: null, user },
+        {
+          responseType: "blob",
+        }
       );
-    } catch (downloadError) {
-      // Handle specific download errors
-      console.error("Download error:", downloadError);
 
-      // Check if error response exists
-      if (downloadError.response) {
-        // Server responded with an error
+      // Check if response is an error (JSON)
+      if (response.headers["content-type"].includes("application/json")) {
+        // Read the Blob to extract error message
+        const errorText = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsText(response.data);
+        });
+
+        // Parse the error message
+        try {
+          const errorData = JSON.parse(errorText);
+          setError(errorData.message || "Failed to download file.");
+        } catch (parseError) {
+          setError("Failed to parse error response.");
+        }
+        return;
+      }
+
+      // If it's a file, proceed with download
+      const blob = new Blob([response.data], {
+        type: response.headers["content-type"] || "application/octet-stream",
+      });
+      const downloadUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = downloadUrl;
+      link.download = fileDetails.fileName;
+      link.click();
+      URL.revokeObjectURL(downloadUrl);
+    } catch (downloadError) {
+      // Handle Blob error parsing for 403/other status errors
+      if (
+        downloadError.response &&
+        downloadError.response.data instanceof Blob
+      ) {
+        try {
+          const errorText = await new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = reject;
+            reader.readAsText(downloadError.response.data);
+          });
+
+          const errorData = JSON.parse(errorText);
+          setError(
+            errorData.message ||
+              `Failed to download file. Status: ${downloadError.response.status}`
+          );
+        } catch (parseError) {
+          setError(
+            `Failed to download file. Status: ${downloadError.response.status}`
+          );
+        }
+      } else if (downloadError.response) {
+        // Fallback for non-Blob responses
         setError(
           downloadError.response.data.message ||
             "Failed to download file. Please try again."
