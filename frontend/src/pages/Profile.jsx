@@ -47,7 +47,7 @@ const Profile = () => {
 
   useEffect(() => {
     dispatch(fetchUserFiles());
-  }, [dispatch]);
+  }, []);
 
   const handleShare = (file) => {
     setSelectedFile(file);
@@ -86,7 +86,9 @@ const Profile = () => {
   const handleDelete = (fileId) => {
     if (window.confirm("Are you sure you want to delete this file?")) {
       dispatch(deleteFile({ fileId }));
-      dispatch(fetchUserFiles());
+      setTimeout(() => {
+        dispatch(fetchUserFiles());
+      }, 1000);
     }
   };
 
