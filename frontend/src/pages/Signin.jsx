@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft, FiLoader } from "react-icons/fi";
 import { motion } from "framer-motion";
 import { twMerge } from "tailwind-merge";
 import { Link, useNavigate } from "react-router-dom";
@@ -63,16 +63,25 @@ const BubbleButton = ({ children, className, ...rest }) => {
   );
 };
 
-const SplashButton = ({ children, className, ...rest }) => {
+const SplashButton = ({ children, className, isLoading, ...rest }) => {
   return (
     <button
+      disabled={isLoading}
       className={twMerge(
         "rounded-md bg-gradient-to-br from-blue-400 to-blue-700 px-4 py-2 text-lg text-zinc-50 ring-2 ring-blue-500/50 ring-offset-2 ring-offset-zinc-950 transition-all hover:scale-[1.02] hover:ring-transparent active:scale-[0.98] active:ring-blue-500/70",
+        isLoading && "cursor-not-allowed opacity-50",
         className
       )}
       {...rest}
     >
-      {children}
+      {isLoading ? (
+        <div className="flex items-center justify-center">
+          <FiLoader className="mr-2 animate-spin" />
+          {children}
+        </div>
+      ) : (
+        children
+      )}
     </button>
   );
 };
@@ -90,12 +99,20 @@ const UserForm = () => {
   const [otpSentSuccessMsg, setOtpSentSuccessMsg] = useState("");
   const [error, setError] = useState("");
 
-  // Handle Sign up
+  const [isSignupLoading, setIsSignupLoading] = useState(false);
+  const [isSigninLoading, setIsSigninLoading] = useState(false);
+  const [isOtpVerifyLoading, setIsOtpVerifyLoading] = useState(false);
+
+  // HAndle Sign up
   const handleSignup = async (e) => {
     e.preventDefault();
+    setError("");
+    setIsSignupLoading(true);
 
     if (!email || !password) {
-      return alert("Enter email and passord please!");
+      setError("Enter email and password please!");
+      setIsSignupLoading(false);
+      return;
     }
 
     try {
@@ -113,12 +130,16 @@ const UserForm = () => {
       setOtpSentSuccessMsg(data.message);
     } catch (error) {
       setError(error?.response?.data.message);
+    } finally {
+      setIsSignupLoading(false);
     }
   };
 
-  // Hande OTP verfication
+  // Handle OTP verfication
   const handleOTPVerification = async (e) => {
     e.preventDefault();
+    setError("");
+    setIsOtpVerifyLoading(true);
 
     try {
       const { data } = await axios.post(
@@ -153,16 +174,22 @@ const UserForm = () => {
         throw Error(data.message);
       }
     } catch (error) {
-      setError(error?.response?.data.message);
+      setError(error?.response?.data.message || "OTP Verification Failed");
+    } finally {
+      setIsOtpVerifyLoading(false);
     }
   };
 
   // Handle Sign in
   const handleSignin = async (e) => {
     e.preventDefault();
+    setError("");
+    setIsSigninLoading(true);
 
     if (!email || !password) {
-      return alert("Enter email password please!");
+      setError("Enter email and password please!");
+      setIsSigninLoading(false);
+      return;
     }
 
     try {
@@ -205,7 +232,9 @@ const UserForm = () => {
         throw Error(data.message);
       }
     } catch (error) {
-      setError(error?.response?.data.message);
+      setError(error?.response?.data.message || "Sign In Failed");
+    } finally {
+      setIsSigninLoading(false);
     }
   };
 
@@ -233,7 +262,12 @@ const UserForm = () => {
             onChange={(e) => setOtp(e.target.value)}
           />
         </div>
-        <SplashButton type="submit" className="w-full">
+        {error && <p className="text-red-500 mb-3">{error}</p>}
+        <SplashButton
+          type="submit"
+          className="w-full"
+          isLoading={isOtpVerifyLoading}
+        >
           Verify OTP
         </SplashButton>
       </form>
@@ -242,7 +276,7 @@ const UserForm = () => {
 
   return (
     <>
-      {error}
+      {error && <p className="text-red-500 mb-3">{error}</p>}
       {formState === "signup" && (
         <>
           <form onSubmit={handleSignup}>
@@ -277,7 +311,11 @@ const UserForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <SplashButton type="submit" className="w-1/2">
+            <SplashButton
+              type="submit"
+              className="w-1/2"
+              isLoading={isSignupLoading}
+            >
               Sign up
             </SplashButton>
           </form>
@@ -323,7 +361,11 @@ const UserForm = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <SplashButton type="submit" className="w-1/2">
+            <SplashButton
+              type="submit"
+              className="w-1/2"
+              isLoading={isSigninLoading}
+            >
               Sign in
             </SplashButton>
           </form>
