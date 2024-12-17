@@ -4,6 +4,7 @@ import EmailService from "../utils/emailService.js";
 import { generateOTP } from "../utils/otpUtils.js";
 import { ResponseHandler } from "../utils/responseHandler.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
 
 // Signup Controller
 export const signup = async (req, res) => {
@@ -18,10 +19,14 @@ export const signup = async (req, res) => {
         .json({ message: "User already exists. Please sign in." });
     }
 
+    // Hash the password
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
     // Create a new user
     const newUser = new User({
       email,
-      password, // Note: Hash the password later for security
+      password: hashedPassword, // Store hashed password
       role: "user",
       isVerified: false,
     });
@@ -40,7 +45,12 @@ export const signup = async (req, res) => {
     await otpVerification.save();
 
     // Send OTP via email
-    await EmailService.sendOTPEmail(email, otp);
+    console.log(
+      `Commenting the email sending service as because as soon as 
+      I push my compose file to github my sendgrid apikey gets exposed and the service starts failing. 
+      So please take the code from here: ${otp}`
+    );
+    // await EmailService.sendOTPEmail(email, otp);
 
     res.status(200).json({
       success: true,
@@ -55,7 +65,7 @@ export const signup = async (req, res) => {
   }
 };
 
-// OTP Verification Controller
+// OTP Verification Controller (unchanged)
 export const verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
@@ -66,6 +76,18 @@ export const verifyOTP = async (req, res) => {
     if (!otpRecord) {
       await User.deleteOne({ email });
       return res.status(400).json({ message: "Invalid OTP." });
+    }
+
+    // Check if OTP is older than 10 minutes
+    const currentTime = new Date();
+    const otpCreatedTime = otpRecord.createdAt;
+    const timeDifferenceInMinutes =
+      (currentTime - otpCreatedTime) / (1000 * 60);
+
+    if (timeDifferenceInMinutes > 10) {
+      // Delete the expired OTP record
+      await OtpVerification.deleteOne({ email, otp });
+      return ResponseHandler.error(res, "OTP has expired", 400);
     }
 
     // Update user as verified
@@ -118,38 +140,12 @@ export const signin = async (req, res) => {
         .json({ message: "User not found. Please sign up." });
     }
 
-    // TODO: Verify password (hash comparison can be added later)
-    if (user.password !== password) {
+    // Compare passwords using bcrypt
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
       return ResponseHandler.error(res, "Invalid credentials.", 401);
     }
 
-    // Check if user is verified
-    // if (!user.isVerified) {
-    //   // Generate OTP
-    //   const otp = generateOTP();
-
-    //   // Save OTP to verification collection
-    //   const otpVerification = new OtpVerification({
-    //     email,
-    //     otp,
-    //   });
-
-    //   await otpVerification.save();
-
-    //   // Send OTP via email
-    //   await EmailService.sendOTPEmail(email, otp);
-
-    //   ResponseHandler.success(
-    //     res,
-    //     "Your email was not verified! OTP sent to your email for verification!",
-    //     {
-    //       otpSent: true,
-    //       email,
-    //     }
-    //   );
-
-    //   return;
-    // } else {
     // Generate JWT
     const jwtPayload = {
       id: user._id,
@@ -166,42 +162,11 @@ export const signin = async (req, res) => {
       role: user.role,
       token: token,
     });
-    // }
   } catch (error) {
     return ResponseHandler.error(
       res,
       "Signin failed. Please try again later.",
       error
     );
-  }
-};
-
-export const fetchUserData = async (req, res) => {
-  try {
-    // Get the authenticated user ID from the request (from JWT middleware)
-    const userId = req.user.id; // Assuming you have `req.user` available via middleware
-
-    // Fetch user data from the database by ID
-    const user = await User.findById(userId)
-      .select("githubId username name avatar publishedRepos purchasedRepos") // Select only the required fields
-      .populate("publishedRepos") // Populate published repos
-      .populate("purchasedRepos"); // Populate purchased repos
-
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    // Respond with the filtered user data
-    ResponseHandler.success(res, "User data fetched successfully", {
-      githubId: user.githubId,
-      username: user.username,
-      name: user.name,
-      avatar: user.avatar,
-      publishedRepos: user.publishedRepos, // Populated published repos data
-      purchasedRepos: user.purchasedRepos, // Populated purchased repos data
-    });
-  } catch (error) {
-    console.error("Error fetching user data:", error.message);
-    ResponseHandler.error(res, "Error fetching user data!");
   }
 };
