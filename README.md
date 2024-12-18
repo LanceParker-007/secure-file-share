@@ -11,10 +11,10 @@
 ## 🚀 Features
 
 - **Signup using mfa**: Sign up using mfa and password hashing.
-  > (mfa disabled for now as sendgrid won't sent email(as I exposed my sengrid api key here), so once you signup, you can simply sign in without otp entering or you can get otp from logs, I have logged it and you can proceed.)
+  > (mfa disabled for now as SendGrid won't send an email(as I exposed my sengrid API key here), so once you sign in, you can simply sign in without OTP verification or you can get OTP from backend logs to do this step, I have logged it and you can proceed.)
 - **Secure File Sharing**: Share files securely using expirable links.
 - **Expirable Links**: Set expiration times to ensure files are inaccessible after a specific duration.
-- **Make link for specific People**: You can also mentions emails who can access these files.
+- **Link for specific People**: You can also mention emails who can access these files.
 - **SendGrid Integration**: Email notifications with OTPs for added security.
 - **Fully Dockerized**: Easy to set up with Docker Compose.
 
@@ -41,7 +41,22 @@ Run the following commands from VS code to run the project on your machine:
 
 This command will build the frontend and backend services, set up a MongoDB container, and start all services.
 
-> **Will soon ad the live link where everything will work!** It is almost done (will add the link here). Here files are encrypted (which you check yourself in the uploads folder) and stored locally but on live aws s3 is used.\*\*
+**Some points to Note**: 
+  - This is running well on Windows.
+  - To run in Ubuntu remove the following piece of code from the backend service in the docker-compose file:
+    ``` 
+      - type: bind
+        source: ./uploads
+        target: /app/uploads
+        bind:
+          create_host_path: true
+      ```
+  - I was not able to test it for MacOS, but I but I will update here once done.
+  - If you try this in some office network it can give an error when installing packages, so use a personal internet connection.
+  - Rest all is good, hopefully it'll run. If it fail once try again. When I tested it on some machines it took 2 tries to go up and running.
+  - Still face any issues and if you would like to talk we can connect.
+
+> **Will soon add the live link where everything will work!** It is almost done (will add the link here). Here files are encrypted (which you check yourself in the uploads folder) and stored locally but on live AWS s3 is used.\*\*
 
 ## Usage
 
