@@ -7,6 +7,22 @@
 > **ABSharing** is a secure file-sharing application that allows users to share files with others using expirable links, ensuring privacy and security.
 
 ## 🛠 Project Structure
+  > This is a basic view folder structure. See the docs folder to get a full view.
+  ```
+    - backend (for the backend code)
+      - src
+      - package.json
+      - Dockerfile
+    - docs (See here the full folder structure)
+    - frontend (all the frontend code)
+      - src
+      - package.json
+      - Dockerfile
+    - .gitignore
+    - docker-compose.yml
+    - README.md
+  ```
+
 
 ## 🚀 Features
 
