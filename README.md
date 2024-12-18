@@ -12,7 +12,7 @@
 
 - **Signup using mfa**: Sign up using mfa and password hashing.
   > (mfa disabled for now as SendGrid won't send an email(as I exposed my sengrid API key here), so once you sign in, you can simply sign in without OTP verification or you can get OTP from backend logs to do this step, I have logged it and you can proceed.)
-- **Secure File Sharing**: Share files securely using expirable links.
+- **Secure Files and Share**: Your files are encrypted at rest and can be shared with other people.
 - **Expirable Links**: Set expiration times to ensure files are inaccessible after a specific duration.
 - **Link for specific People**: You can also mention emails who can access these files.
 - **SendGrid Integration**: Email notifications with OTPs for added security.
@@ -53,10 +53,10 @@ This command will build the frontend and backend services, set up a MongoDB cont
       ```
   - I was not able to test it for MacOS, but I but I will update here once done.
   - If you try this in some office network it can give an error when installing packages, so use a personal internet connection.
-  - Rest all is good, hopefully it'll run. If it fail once try again. When I tested it on some machines it took 2 tries to go up and running.
+  - Rest all is good, hopefully, it'll run. If it fails once try again. When I tested it on some machines it took 2 tries to go up and running.
   - Still face any issues and if you would like to talk we can connect.
 
-> **Will soon add the live link where everything will work!** It is almost done (will add the link here). Here files are encrypted (which you check yourself in the uploads folder) and stored locally but on live AWS s3 is used.\*\*
+> **I will soon add the live link where everything will work!** It is almost done (will add the link here). Here files are encrypted (which you check yourself in the uploads folder) and stored locally but on live AWS s3 is used.\*\*
 
 ## Usage
 
