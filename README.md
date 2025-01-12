@@ -8,6 +8,12 @@
 
 ## 🛠 Project Structure
 
+> Checkout the docs folder
+
+## 🌍 Live link
+
+The application is also deployed live at https://absharing-frontend.vercel.app/ where the encrypted files are stored in aws s3.
+
 ## 🚀 Features
 
 - **Signup using mfa**: Sign up using mfa and password hashing.
@@ -41,7 +47,7 @@ Run the following commands from VS code to run the project on your machine:
 
 This command will build the frontend and backend services, set up a MongoDB container, and start all services.
 
-> **Will soon ad the live link where everything will work!** It is almost done (will add the link here). Here files are encrypted (which you check yourself in the uploads folder) and stored locally but on live aws s3 is used.\*\*
+> Files are encrypted which you check by yourself in the **uploads** folder
 
 ## Usage
 
@@ -76,10 +82,10 @@ Ensure the following environment variables are properly set in the respective `.
 
 ## 📚 Project Details
 
-- **Frontend**: Built with React or Vue.js.
+- **Frontend**: Built with React.js.
 - **Backend**: Built with Node.js and Express.
 - **Database**: MongoDB running as a Docker service.
-- **Email Service**: Integrated with SendGrid for OTP delivery.
+- **Email Service**: Integrated with SendGrid in DEV for OTP delivery.
 
 ## ✍️ Author
 
