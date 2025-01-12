@@ -108,4 +108,8 @@ docker-compose.yml
             └── axiosInstance.js
     ├── tailwind.config.js
     ├── vercel.json
+<<<<<<< HEAD
     └── vite.config.js
+=======
+    └── vite.config.js
+>>>>>>> 7a53c4d4d5a234089421a80effb0e7f9824ac2e1

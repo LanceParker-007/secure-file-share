@@ -8,6 +8,23 @@
 
 ## 🛠 Project Structure
 
+> This is a basic view folder structure. See the docs folder to get a full view.
+
+```
+  - backend (for the backend code)
+    - src
+    - package.json
+    - Dockerfile
+  - docs (See here the full folder structure)
+  - frontend (all the frontend code)
+    - src
+    - package.json
+    - Dockerfile
+  - .gitignore
+  - docker-compose.yml
+  - README.md
+```
+
 > Checkout the docs folder
 
 ## 🌍 Live link
@@ -17,10 +34,10 @@ The application is also deployed live at https://absharing-frontend.vercel.app/ 
 ## 🚀 Features
 
 - **Signup using mfa**: Sign up using mfa and password hashing.
-  > (mfa disabled for now as sendgrid won't sent email(as I exposed my sengrid api key here), so once you signup, you can simply sign in without otp entering or you can get otp from logs, I have logged it and you can proceed.)
-- **Secure File Sharing**: Share files securely using expirable links.
+  > (mfa disabled for now as SendGrid won't send an email(as I exposed my sengrid API key here), so once you sign in, you can simply sign in without OTP verification or you can get OTP from backend logs to do this step, I have logged it and you can proceed.)
+- **Secure Files and Share**: Your files are encrypted at rest and can be shared with other people.
 - **Expirable Links**: Set expiration times to ensure files are inaccessible after a specific duration.
-- **Make link for specific People**: You can also mentions emails who can access these files.
+- **Link for specific People**: You can also mention emails who can access these files.
 - **SendGrid Integration**: Email notifications with OTPs for added security.
 - **Fully Dockerized**: Easy to set up with Docker Compose.
 
