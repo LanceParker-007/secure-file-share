@@ -31,6 +31,8 @@
 
 The application is also deployed live at https://absharing-frontend.vercel.app/ where the encrypted files are stored in aws s3.
 
+> Note: The backend is deployed on render free version and it goes to sleep if not used. It takes around 30 sec to restart, please wait for it 😅.
+
 ## 🚀 Features
 
 - **Signup using mfa**: Sign up using mfa and password hashing.
